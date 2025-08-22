@@ -1,0 +1,14 @@
+# VS Code editor configuration
+.vscode/
+
+# Python virtual environment
+myvenv/
+
+# --- Other common entries ---
+# Executable build files
+*.exe
+
+# Object files
+*.o
+
+test/
