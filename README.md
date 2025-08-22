@@ -1,49 +1,113 @@
-# Your Parallel Encryption and Decryption
+Encrypty: A Parallel File Encryption Utility
+Encrypty is a C++ command-line utility designed to encrypt and decrypt files within a directory. This project serves as a practical demonstration of various concurrency models in C++, showcasing sequential, multi-process, and multi-threaded approaches to file processing. It also implements different encryption algorithms to illustrate a range of security levels.
 
-## Overview
+✨ Features
+Multiple Concurrency Models: Implements file processing sequentially, with multiple processes, and with multiple threads.
 
-This project demonstrates the implementation of encryption and decryption mechanisms using parallel processing techniques in C++. By leveraging both multiprocessing and multithreading, the project aims to enhance the efficiency and performance of cryptographic operations.
+Variety of Encryption Algorithms: Demonstrates both a classical Caesar cipher and the industry-standard AES-256-GCM for robust security.
 
-## Branches
+Directory Traversal: Recursively finds and processes all files within a specified directory.
 
-The repository contains two primary branches, each focusing on a distinct parallel processing approach:
+Environment-Based Configuration: Securely manages encryption keys and passwords using a .env file.
 
-### 1. `add/childProcessing`
+🌿 Branch Overview
+This repository is structured into three main branches, each demonstrating a unique approach to the problem.
 
-**Description:** This branch showcases the use of parallel multiprocessing by creating child processes to handle encryption and decryption tasks. It utilizes the `fork()` system call to spawn child processes, enabling concurrent execution of tasks.
+🌳 main branch
+Concurrency Model: Sequential Processing
 
-**Key Features:**
+Description: This branch processes files one by one. It uses a standard std::queue to line up file tasks and executes them in a single-threaded, synchronous manner. It serves as a baseline for performance comparison.
 
-- **Process Management:** Implements process creation and management using `fork()`.
-- **Task Queue:** Manages encryption and decryption tasks using a queue structure.
-- **Task Execution:** Child processes execute tasks independently, allowing parallel processing.
+Encryption Algorithm: Basic Caesar Cipher.
 
-### 2. `add/multithreading`
+🚀 multiprocessing branch
+Concurrency Model: Multi-Processing
 
-**Description:** This branch focuses on multithreading combined with shared memory to perform encryption and decryption. It employs POSIX threads (`pthread`) and utilizes shared memory segments for efficient inter-thread communication.
+Description: This branch leverages the power of multiple CPU cores by creating a separate child process for each file using the POSIX fork() system call. Inter-process communication and task queuing are managed using POSIX shared memory (shm_open, mmap) and named semaphores.
 
-**Key Features:**
+Encryption Algorithm: Basic Caesar Cipher.
 
-- **Multithreading:** Implements concurrent execution using POSIX threads.
-- **Shared Memory:** Utilizes shared memory for communication between threads.
-- **Semaphores:** Employs semaphores to manage synchronization and ensure data consistency.
+⚡ multithreading branch
+Concurrency Model: Multi-Threading
 
-## Getting Started
+Description: This branch uses a pool of worker threads (std::thread) to process files in parallel. It implements a thread-safe producer-consumer queue using std::mutex and std::condition_variable for efficient task distribution.
 
-To explore the implementations in each branch:
+Encryption Algorithm: AES-256-GCM (via OpenSSL), a modern authenticated encryption cipher providing high security and data integrity.
 
-   ```bash
-   git clone <repo-url>
-   cd encrypty
-   git checkout <branch>
-   # Now make a virtual env and activate
-   python -m venv /myvenv
-   source myvenv/bin/activate
-   python makeDirs.py
-   make
-   ./encrypty
-   # type directory name which is created from makeDirs.py
-   test
-   ENCRYPT # after giving directory name, give ENCRYPT or DECRYPT to tell what to do
-   ```
+🛠️ Technology Stack
+Language: C++17
 
+Concurrency APIs:
+
+POSIX (fork, shm_open, mmap, sem_open)
+
+Standard C++ Threads (std::thread, std::mutex, std::condition_variable)
+
+Cryptography:
+
+OpenSSL (for AES-256-GCM implementation)
+
+Caesar Cipher (for demonstration)
+
+Build System: Make
+
+⚙️ Prerequisites
+A C++ compiler (g++)
+
+make build automation tool
+
+For Windows Users: MSYS2 with the openssl and openssl-devel packages installed.
+
+pacman -S openssl openssl-devel
+
+🚀 Build and Run
+Clone the repository:
+
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
+
+Checkout your desired branch:
+
+# Example:
+git checkout multithreading
+
+Configure the Environment:
+Create a .env file in the root of the project.
+
+For the main and multiprocessing branches, add a numeric key:
+
+CRYPTION_KEY=3
+
+For the multithreading branch, add a secure password:
+
+CRYPTION_PASSWORD="your-strong-and-secret-password"
+
+Build the project:
+
+make
+
+This will create two executables: encrypt_decrypt and cryption.
+
+Run the application:
+The main application processes an entire directory.
+
+./encrypt_decrypt
+
+The program will then prompt you to enter a directory path and an action (encrypt or decrypt).
+
+Example:
+
+Enter the directory path: test
+Enter the action (encrypt/decrypt): encrypt
+
+📂 Code Structure
+.
+├── src/
+│   └── app/
+│       ├── encryptDecrypt/  # Contains all encryption/decryption logic
+│       ├── fileHandling/    # File I/O and .env parsing utilities
+│       └── processes/       # Concurrency models (ProcessManagement, Task)
+├── test/                    # Directory for test files
+├── .env                     # Environment configuration (you must create this)
+├── main.cpp                 # Main entry point for the directory processor
+└── Makefile                 # Build script
